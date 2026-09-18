@@ -47,6 +47,13 @@ Nothing is `captured` yet. The `takes` column has been measured: a user account 
 seeding `/etc/xdg`, and every key was read back with `kreadconfig6` running as that user, which is
 the same KConfig cascade Plasma itself reads. Every seeded key came back with the intended value.
 
+The existing pilot account demonstrates the other half of the model at the same time. It resolves
+`LookAndFeelPackage` to `org.fedoraproject.fedoradark.desktop` — its own `~/.config` value, set
+before any of this existed, beating the `/etc/xdg` default. Yet it resolves `ColorScheme` to
+`BreezeLight`, which came from `/etc/xdg`, because that key was never set locally. A change the
+user made wins, and an untouched key still follows the image, on one account at one moment rather
+than argued from the specification.
+
 That settles the mechanism and not the whole question. It proves the value reaches the user, which
 is what the delivery model depends on. It does not prove each Plasma component acts on the value at
 session start, and the components that read a default once at first run are the ones to re-check
