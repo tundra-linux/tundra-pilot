@@ -14,17 +14,30 @@ an inline note disappears on the first capture round-trip without anyone noticin
 
 ## Reference platform
 
-| | |
-|---|---|
-| Distribution | Fedora KDE Plasma Desktop 44 |
-| Plasma | 6.6.4-1.fc44 |
-| KDE Frameworks | 6.25.0-1.fc44 |
-| KDE Gear | 25.12.3 |
-| `/bin/sh` | `/usr/bin/bash` |
-| Host | VMware Workstation guest, EFI, 4 vCPU, 8 GB, 3D acceleration and audio present |
+| | Installed on the pilot | Available in `updates` |
+|---|---|---|
+| Distribution | Fedora KDE Plasma Desktop 44 | |
+| `plasma-desktop` | 6.6.4-1.fc44 | **6.7.5-1.fc44** |
+| `plasma-workspace` | 6.6.4-1.fc44 | **6.7.5-1.fc44** |
+| `kwin-common` | 6.6.4-2.fc44 | |
+| `breeze-gtk-common` | 6.7.5-1.fc44 | |
+| KDE Frameworks | 6.25.0-1.fc44 | |
+| KDE Gear | 25.12.3 | |
+| `/bin/sh` | `/usr/bin/bash` | |
+| Host | VMware Workstation guest, EFI, 4 vCPU, 8 GB, 3D acceleration and audio present | |
 
-Read from the running pilot on 2026-09-18 via `rpm -q`. Note that `plasmashell --version`
-aborts without a display, so the package query is the reliable oracle when capturing over ssh.
+Read on the pilot on 2026-09-18 with `rpm -q` and `dnf list --available`. Enabled repositories are
+`fedora`, `updates` and `fedora-cisco-openh264`; `updates-testing` is not enabled.
+
+**The pilot is behind its own repository and the stack is currently mixed.** The machine was
+installed and never fully updated, so Plasma sits at 6.6.4 while `updates` offers 6.7.5 — and
+`breeze-gtk` came in at 6.7.5 as a dependency of the package delta, so two halves of the same
+release are now installed side by side. Nothing should be captured in this state: a key recorded
+here is a claim about a system that matches neither the reference platform nor any shipped Fedora.
+Run `dnf upgrade` and re-read this table before the first capture.
+
+Query the package manager, never the running shell. `plasmashell --version` aborts without a
+display, which is exactly the condition when working over ssh.
 
 ## Status of each key
 
@@ -39,18 +52,18 @@ running a fresh-user login against seeded defaults and diffing the result.
 
 | File | Key | Status | Takes from `/etc/xdg` | Plasma |
 |---|---|---|---|---|
-| `kdeglobals` | `[KDE] LookAndFeelPackage` | seed | untested | 6.6.4 |
-| `kdeglobals` | `[KDE] widgetStyle` | seed | untested | 6.6.4 |
-| `kdeglobals` | `[General] ColorScheme` | seed | untested | 6.6.4 |
-| `dolphinrc` | `[General] EditableUrlNavigator` | seed | untested | 6.6.4 |
-| `dolphinrc` | `[General] ShowFullPath` | seed | untested | 6.6.4 |
-| `plasmarc` | `[Theme] name` | seed | untested | 6.6.4 |
-| `kwinrc` | `[Windows] ElectricBorderMaximize` | seed | untested | 6.6.4 |
-| `kwinrc` | `[Windows] ElectricBorderTiling` | seed | untested | 6.6.4 |
-| `mimeapps.list` | all | seed | untested | 6.6.4 |
+| `kdeglobals` | `[KDE] LookAndFeelPackage` | seed | untested | 6.7.5 (target) |
+| `kdeglobals` | `[KDE] widgetStyle` | seed | untested | 6.7.5 (target) |
+| `kdeglobals` | `[General] ColorScheme` | seed | untested | 6.7.5 (target) |
+| `dolphinrc` | `[General] EditableUrlNavigator` | seed | untested | 6.7.5 (target) |
+| `dolphinrc` | `[General] ShowFullPath` | seed | untested | 6.7.5 (target) |
+| `plasmarc` | `[Theme] name` | seed | untested | 6.7.5 (target) |
+| `kwinrc` | `[Windows] ElectricBorderMaximize` | seed | untested | 6.7.5 (target) |
+| `kwinrc` | `[Windows] ElectricBorderTiling` | seed | untested | 6.7.5 (target) |
+| `mimeapps.list` | all | seed | untested | 6.7.5 (target) |
 | `gtk-3.0/settings.ini` | all | seed | untested | n/a |
 | `gtk-4.0/settings.ini` | all | seed | untested | n/a |
-| `kglobalshortcutsrc` | the three `[services]` entries below | seed | untested | 6.6.4 |
+| `kglobalshortcutsrc` | the three `[services]` entries below | seed | untested | 6.7.5 (target) |
 
 ## Shortcuts: what is already stock
 
