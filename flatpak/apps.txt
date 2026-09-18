@@ -1,0 +1,18 @@
+# Applications installed system-wide from Flathub by scripts/apply.sh.
+# One reference per line. Comments and blank lines are ignored.
+#
+# All six references confirmed present on Flathub via flathub.org/api/v2/appstream/ on
+# 2026-09-18.
+#
+# The set covers a Windows migrant's first week and stops there: a browser, an editor, an
+# image editor, a document, a PDF, a video. Anything else comes from Flathub, which is one
+# search away. Every addition here is install time on a clean machine and support surface
+# forever, and Flatpaks live on the persistent partition rather than in the image, so the
+# cost is not image size.
+
+org.chromium.Chromium
+com.vscodium.codium
+org.gimp.GIMP
+org.libreoffice.LibreOffice
+org.kde.okular
+org.videolan.VLC

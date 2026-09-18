@@ -1,0 +1,53 @@
+# Packages the pilot adds to a stock Fedora KDE Plasma Desktop 44 install.
+#
+# Format: fedora-name | alpine-counterpart (repo) | reason
+#
+# The Alpine column is why this file exists. Phase 2 translates this list rather than copying
+# it, and an entry with no counterpart and no reason cannot be translated by anyone who was not
+# in the room. `main` gets about two years of support; `community` is supported only on the
+# newest stable branch, so every community entry is a rebase obligation.
+#
+# Fedora versions read from mdapi.fedoraproject.org for f44, Alpine from pkgs.alpinelinux.org
+# for v3.24, both on 2026-09-18.
+#
+# scripts/apply.sh reads the first field and ignores the rest.
+
+# --- shell and lint harness -------------------------------------------------------------
+zsh                            | zsh (main)                  | interactive shell for human users
+busybox                        | busybox (main)              | ash parser for the lint harness. Fedora's build is a fair parser stand-in but the wrong applet oracle, which is why the vocabulary check runs in a container instead
+ShellCheck                     | shellcheck (community)      | POSIX linting, shellcheck -s sh
+devscripts-checkbashisms       | checkbashisms (main)        | the one tool in the chain that rejects a bashism outright. Fedora splits it out of the devscripts source package under this name
+
+# --- privilege escalation ---------------------------------------------------------------
+opendoas                       | doas (main)                 | escalation for users and documentation. Alpine has it in main; sudo is community-only there. Fedora's own sudo stays installed for dnf and RPM workflows and is not removed
+
+# --- virtualization ---------------------------------------------------------------------
+virt-manager                   | virt-manager (community)    | the VM frontend. Ships as a first-class feature, not an add-on
+qemu-kvm                       | qemu-system-x86_64 (community) | Fedora's qemu-kvm is a thin wrapper over the x86_64 system emulator. Alpine needs the arch-specific package named directly to avoid pulling foreign architectures
+libvirt-daemon-kvm             | libvirt-daemon (community)  | the daemon plus its KVM driver
+libvirt-daemon-config-network  | libvirt-daemon (community)  | the default NAT network. Alpine ships no separate config subpackage; the network definition is a Phase 2 question
+edk2-ovmf                      | ovmf (community)            | UEFI firmware for guests. Different package name on each side
+libvirt-client                 | libvirt-client (community)  | virsh, which is what the virtualization gate runs
+
+# --- containers -------------------------------------------------------------------------
+podman                         | podman (community)          | rootless containers; the escape valve for anything needing a glibc userland
+distrobox                      | distrobox (community)       | the ergonomic layer over podman
+
+# --- applications and their plumbing ----------------------------------------------------
+flatpak                        | flatpak (community)         | the only application channel
+xdg-desktop-portal-kde         | xdg-desktop-portal-kde (community) | file pickers and screen sharing for sandboxed applications
+flatpak-kcm                    | flatpak-kcm (community)     | per-application permissions in System Settings. A settings module, not a store frontend
+libnotify                      | libnotify (community)       | notify-send, used by the update notifier
+
+# --- network shares and secrets ---------------------------------------------------------
+kio-extras                     | kio-extras (community)      | smb:// browsing in Dolphin
+kdenetwork-filesharing         | kdenetwork-filesharing (community) | the outbound half of file sharing
+
+# --- printing and bluetooth -------------------------------------------------------------
+cups                           | cups (main)                 | print scheduler
+plasma-print-manager           | print-manager (community)   | the Plasma printing module. Different package name on each side; Fedora has no package called print-manager at all
+bluez                          | bluez (main)                | bluetooth stack
+bluedevil                      | bluedevil (community)       | the Plasma bluetooth module
+
+# --- presentation -----------------------------------------------------------------------
+breeze-gtk                     | breeze-gtk (community)      | makes GTK applications follow the Plasma colour scheme without a theme daemon

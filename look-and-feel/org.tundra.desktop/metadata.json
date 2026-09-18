@@ -1,0 +1,18 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Tundra"
+            }
+        ],
+        "Category": "",
+        "Description": "Windows-ergonomics desktop layout for Tundra",
+        "EnabledByDefault": true,
+        "Id": "org.tundra.desktop",
+        "License": "GPL-2.0-or-later",
+        "Name": "Tundra",
+        "Version": "0.1",
+        "Website": "https://github.com/tundra-linux"
+    }
+}

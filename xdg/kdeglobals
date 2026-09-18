@@ -1,0 +1,7 @@
+[KDE]
+LookAndFeelPackage=org.tundra.desktop
+widgetStyle=Breeze
+
+[General]
+ColorScheme=BreezeLight
+Name=Breeze

@@ -1,0 +1,16 @@
+[Default Applications]
+text/html=org.chromium.Chromium.desktop
+x-scheme-handler/http=org.chromium.Chromium.desktop
+x-scheme-handler/https=org.chromium.Chromium.desktop
+application/pdf=org.kde.okular.desktop
+image/jpeg=org.kde.gwenview.desktop
+image/png=org.kde.gwenview.desktop
+video/mp4=org.videolan.VLC.desktop
+video/x-matroska=org.videolan.VLC.desktop
+audio/mpeg=org.videolan.VLC.desktop
+application/vnd.openxmlformats-officedocument.wordprocessingml.document=org.libreoffice.LibreOffice.desktop
+application/vnd.openxmlformats-officedocument.spreadsheetml.sheet=org.libreoffice.LibreOffice.desktop
+application/vnd.openxmlformats-officedocument.presentationml.presentation=org.libreoffice.LibreOffice.desktop
+application/vnd.oasis.opendocument.text=org.libreoffice.LibreOffice.desktop
+application/vnd.oasis.opendocument.spreadsheet=org.libreoffice.LibreOffice.desktop
+text/plain=org.kde.kate.desktop

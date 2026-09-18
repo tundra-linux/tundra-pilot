@@ -1,0 +1,16 @@
+# Packages the pilot removes from a stock Fedora KDE Plasma Desktop 44 install.
+#
+# Format: fedora-name | alpine-counterpart (repo) | reason
+#
+# On Tundra these are never installed in the first place, so the Alpine column records what
+# to leave out rather than what to take out.
+#
+# scripts/apply.sh reads the first field and ignores the rest.
+
+plasma-discover                | discover (community)        | no graphical store frontend. Applications come from Flathub through one channel, and a store that can also install host packages contradicts a read-only host
+plasma-discover-notifier       | (part of discover)          | the update notification half of the same frontend
+PackageKit                     | (not installed)             | the daemon behind Discover. plasma-desktop links libpackagekitqt6.so.2, which comes from PackageKit-Qt6 — a Qt binding library that does not itself require this daemon. The daemon goes, the library stays
+kf6-baloo-file                 | (not installed)             | the file-content indexer. plasma-desktop links libKF6Baloo.so.6, which comes from kf6-baloo-libs rather than from this package, so the indexer daemon is the separable part. There is no Fedora package called baloo-file
+akonadi-server                 | (not installed)             | the PIM storage service. Tundra ships no mail or calendar client, and akonadi runs a database per user for nothing
+kmail                          | (not installed)             | PIM. Not in the default application set
+korganizer                     | (not installed)             | PIM. Not in the default application set

@@ -1,0 +1,8 @@
+[services][org.kde.dolphin.desktop]
+_launch=Meta+E,none,Dolphin
+
+[services][org.kde.krunner.desktop]
+_launch=Meta+R,none,KRunner
+
+[services][org.kde.plasma-systemmonitor.desktop]
+_launch=Ctrl+Shift+Esc,none,System Monitor
