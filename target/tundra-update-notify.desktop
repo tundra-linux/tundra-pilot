@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Tundra update notifier
+Comment=Report what the last unattended Flatpak update changed
+Exec=/usr/bin/tundra-update-notify
+Icon=system-software-update
+Terminal=false
+NoDisplay=true
+X-KDE-autostart-phase=2

@@ -1,0 +1,50 @@
+#!/bin/sh
+# Tell the user what the last unattended Flatpak update changed.
+#
+# The update runs as root on a schedule and cannot reach anyone's session bus, so it cannot
+# raise a notification itself. This runs at login, as the user, from an XDG autostart entry —
+# not a user service unit, because there is no systemd on Tundra and the autostart spec is
+# what both systems actually implement.
+#
+# It notifies once per update. A user who logs in three times after one update gets told once.
+#
+# Ships on Tundra. BusyBox vocabulary only.
+
+set -eu
+
+RESULT=/var/lib/tundra/last-update
+SEEN=${XDG_STATE_HOME:-$HOME/.local/state}/tundra/seen-update
+
+[ -f "$RESULT" ] || exit 0
+
+when=$(sed -n 's/^when=//p' "$RESULT")
+status=$(sed -n 's/^status=//p' "$RESULT")
+changed=$(sed -n 's/^changed=//p' "$RESULT")
+
+[ -n "$when" ] || exit 0
+
+# Already told them about this one.
+if [ -f "$SEEN" ] && [ "$(cat "$SEEN")" = "$when" ]; then
+	exit 0
+fi
+
+mkdir -p "${SEEN%/*}"
+
+notify() {
+	command -v notify-send >/dev/null 2>&1 || return 0
+	notify-send --app-name=Tundra --icon=system-software-update "$1" "$2"
+}
+
+if [ "$status" = failed ]; then
+	notify "Application updates failed" \
+		"The last attempt on $when did not finish. Run tundra-update to see why."
+elif [ -n "$changed" ]; then
+	notify "Applications updated" "$changed"
+else
+	# Nothing changed. Record it so the check stays cheap, and say nothing: a notification
+	# that everything is the same as yesterday is the kind users learn to dismiss unread.
+	printf '%s\n' "$when" >"$SEEN"
+	exit 0
+fi
+
+printf '%s\n' "$when" >"$SEEN"

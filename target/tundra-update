@@ -1,0 +1,73 @@
+#!/bin/sh
+# Update Flatpak applications, unattended.
+#
+# Tundra ships no store frontend, which leaves no answer for the thing users update most
+# often. Asking someone to run a command to get browser security fixes does not fit any
+# audience, so this runs on a schedule and the user finds out afterwards rather than being
+# asked first.
+#
+# Three pieces answer the question and this is the first:
+#
+#   tundra-update           this script. Runs as root on a daily schedule.
+#   tundra-update-notify    runs at login as the user, and says what changed.
+#   tundra-update           run by hand, as the manual path.
+#
+# On Tundra the schedule is /etc/periodic/daily, which BusyBox crond runs. On the Fedora
+# pilot there is no /etc/periodic and no cron daemon installed, so scripts/apply.sh generates
+# a systemd timer instead. That adaptation lives in the apply script; nothing systemd-shaped
+# appears here, because this file is what Phase 2 consumes.
+#
+# Ships on Tundra. BusyBox vocabulary only: every command here must be an applet Alpine's
+# BusyBox provides, or a package Tundra installs.
+
+set -eu
+
+STATE_DIR=/var/lib/tundra
+LOG=/var/log/tundra-update.log
+RESULT=$STATE_DIR/last-update
+
+[ "$(id -u)" = 0 ] || {
+	printf 'tundra-update: must run as root to update system-wide Flatpaks\n' >&2
+	exit 1
+}
+
+mkdir -p "$STATE_DIR"
+
+stamp=$(date -u '+%Y-%m-%d %H:%M:%S')
+
+printf '\n=== %s ===\n' "$stamp" >>"$LOG"
+
+# --noninteractive is what makes this safe on a timer: it answers every prompt with the
+# default instead of blocking forever on a runtime that wants confirmation.
+if flatpak update --system --noninteractive >>"$LOG" 2>&1; then
+	status=ok
+else
+	status=failed
+fi
+
+# What actually moved. flatpak prints its work to the log above, but the notifier needs a
+# short list rather than a transcript, so the application names are pulled back out of the
+# section flatpak writes for this run.
+changed=$(sed -n "/^=== $stamp ===/,\$p" "$LOG" |
+	grep -E '^[[:space:]]*[0-9]+\.' |
+	awk '{print $2}' |
+	sort -u |
+	tr '\n' ' ')
+
+{
+	printf 'when=%s\n' "$stamp"
+	printf 'status=%s\n' "$status"
+	printf 'changed=%s\n' "$changed"
+} >"$RESULT"
+
+# World-readable on purpose. The notifier runs as the logged-in user and has to be able to
+# read this; there is nothing sensitive in a list of application names.
+chmod 0644 "$RESULT"
+
+if [ "$status" = failed ]; then
+	printf 'tundra-update: flatpak update failed, see %s\n' "$LOG" >&2
+	exit 1
+fi
+
+[ -n "$changed" ] && printf 'updated:%s\n' "$changed"
+exit 0
