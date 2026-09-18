@@ -16,6 +16,7 @@ Alpine package availability was read from `pkgs.alpinelinux.org` against v3.24 o
 | `xdg/kdeglobals` | `/etc/xdg/kdeglobals` | none. `XDG_CONFIG_DIRS` works the same on both |
 | `xdg/dolphinrc` | `/etc/xdg/dolphinrc` | none |
 | `xdg/kglobalshortcutsrc` | `/etc/xdg/kglobalshortcutsrc` | none to the file, but it is a delta against Fedora 44's stock bindings and Alpine's Plasma is a different release. Re-measure the stock set on the target before assuming the delta is still three entries |
+| `xdg/kcminputrc` | `/etc/xdg/kcminputrc` | none. Carries only the cursor theme; the rest of the file is per-machine input settings and is deliberately not shipped |
 | `xdg/kwinrc` | `/etc/xdg/kwinrc` | none |
 | `xdg/plasmarc` | `/etc/xdg/plasmarc` | none |
 | `xdg/mimeapps.list` | `/etc/xdg/mimeapps.list` | none, but the desktop IDs must match the Flatpaks actually installed, and the set is a Phase 2 decision as much as this one |

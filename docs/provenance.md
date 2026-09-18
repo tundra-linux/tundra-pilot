@@ -67,6 +67,8 @@ when the desktop is driven by hand.
 | `dolphinrc` | `[General] EditableUrlNavigator` | seed | yes | 6.7.5 |
 | `dolphinrc` | `[General] ShowFullPath` | seed | yes | 6.7.5 |
 | `plasmarc` | `[Theme] name` | seed | yes | 6.7.5 |
+| `kdeglobals` | `[Icons] Theme` | seed | yes | 6.7.5 |
+| `kcminputrc` | `[Mouse] cursorTheme` | seed | yes | 6.7.5 |
 | `kwinrc` | `[Windows] ElectricBorderMaximize` | seed | yes | 6.7.5 |
 | `kwinrc` | `[Windows] ElectricBorderTiling` | seed | yes | 6.7.5 |
 | `mimeapps.list` | all | seed | yes | 6.7.5 |

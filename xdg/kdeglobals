@@ -5,3 +5,6 @@ widgetStyle=Breeze
 [General]
 ColorScheme=BreezeLight
 Name=Breeze
+
+[Icons]
+Theme=breeze
