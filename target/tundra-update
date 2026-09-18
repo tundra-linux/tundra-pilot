@@ -48,11 +48,14 @@ fi
 # What actually moved. flatpak prints its work to the log above, but the notifier needs a
 # short list rather than a transcript, so the application names are pulled back out of the
 # section flatpak writes for this run.
+# The trailing space matters: this string is the body of a desktop notification, and a stray
+# space at the end of it is visible to the user.
 changed=$(sed -n "/^=== $stamp ===/,\$p" "$LOG" |
 	grep -E '^[[:space:]]*[0-9]+\.' |
 	awk '{print $2}' |
 	sort -u |
-	tr '\n' ' ')
+	tr '\n' ' ' |
+	sed -e 's/[[:space:]]*$//')
 
 {
 	printf 'when=%s\n' "$stamp"

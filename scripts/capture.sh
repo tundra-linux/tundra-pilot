@@ -128,12 +128,28 @@ shortcut_delta() {
 			while ((getline line < basefile) > 0) {
 				if (line ~ /^\[/) { bsec = line; continue }
 				if (line ~ /^[[:space:]]*$/) continue
-				seen[bsec "\036" line] = 1
+				eq = index(line, "=")
+				if (eq == 0) continue
+				key = substr(line, 1, eq - 1)
+				val = substr(line, eq + 1)
+				split(val, f, ",")
+				active[bsec "\036" key] = f[1]
 			}
 		}
 		/^\[/ { sec = $0; next }
 		/^[[:space:]]*$/ { next }
-		!seen[sec "\036" $0] {
+		{
+			eq = index($0, "=")
+			if (eq == 0) next
+			key = substr($0, 1, eq - 1)
+			val = substr($0, eq + 1)
+			split(val, f, ",")
+			# Compare only the active binding. The second and third fields are the shipped
+			# default and the friendly name, and Plasma rewrites both on its own schedule;
+			# including them turns every incidental churn into a fake delta.
+			if (f[1] == active[sec "\036" key]) next
+			# A key bound to nothing is not a customisation worth shipping.
+			if (f[1] == "none" || f[1] == "") next
 			if (sec != emitted) { if (emitted != "") print ""; print sec; emitted = sec }
 			print
 		}
