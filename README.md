@@ -24,41 +24,16 @@ The apply script is the only supported way to put this repo on a machine. It is 
 second run reports no changes. It never writes to any `~/.config`, because a script that edits the
 live user's configuration hides exactly the failures a fresh-user login is meant to find.
 
-### On a network that intercepts TLS
+### If Flathub is unreachable
 
-The Flatpak stage fails on a corporate network unless the interception CA is in the machine's trust
-store:
+The Flatpak stage stops with a clear message if it cannot reach Flathub over TLS. The usual cause
+is a proxy or a network that inspects TLS, which substitutes its own certificate and needs its CA
+in the machine trust store. Read the certificate the network actually presents with
+`openssl s_client -connect dl.flathub.org:443 -servername dl.flathub.org`, add that root, and
+re-run. `--skip-flatpak` applies everything else meanwhile.
 
-```
-error: Can't load uri https://dl.flathub.org/repo/flathub.flatpakrepo:
-[60] SSL peer certificate or SSH remote key was not OK
-```
-
-The apply script does not install that certificate and should not: which CA a machine trusts is a
-property of the network it sits on, not of this configuration, and a repo that shipped one would be
-shipping a decision about whose traffic inspection to accept.
-
-Read the certificate off the wire rather than guessing which product is doing the intercepting. A
-managed workstation often carries several plausible-looking roots, and picking the wrong one costs
-an afternoon:
-
-```sh
-openssl s_client -connect dl.flathub.org:443 -servername dl.flathub.org </dev/null 2>/dev/null |
-	grep issuer
-```
-
-Then install that root and re-run:
-
-```sh
-doas cp theroot.crt /etc/pki/ca-trust/source/anchors/
-doas update-ca-trust
-openssl s_client -connect dl.flathub.org:443 -servername dl.flathub.org </dev/null 2>&1 |
-	grep -E '^(Verification|verify)'
-```
-
-The same certificate is what lets `podman pull` reach a registry, so the container work needs it
-too. None of this applies on Tundra, where there is no `dnf`, no interception in the picture, and
-the image build supplies its own trust store.
+The apply script does not install a certificate and should not. What a machine trusts is a property
+of the network it is plugged into, not of this configuration.
 
 ## Layout
 

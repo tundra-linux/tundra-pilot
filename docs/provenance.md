@@ -147,10 +147,14 @@ discarded rather than carried forward: a pass on a version the pilot no longer r
 | Look-and-Feel package is valid | Workstation pilot | pass — `kpackagetool6 --type Plasma/LookAndFeel --show org.tundra.desktop` resolves name, plugin id and path. Note `plasma-apply-lookandfeel --list` prints nothing over ssh, including for the stock packages, so it is not a usable check without a session |
 | MIME targets exist | Workstation pilot | **failed, then fixed** — `org.kde.kate.desktop` is not installed on the KDE spin, which ships KWrite. The association pointed at nothing and reported nothing |
 
-Reaching Flathub needed the corporate TLS-interception root CA in the guest's trust store. Without
-it `flatpak remote-add` fails with `[60] SSL peer certificate or SSH remote key was not OK`. The
-intercepting CA is the one the network actually presents, which is worth reading off the wire with
-`openssl s_client` rather than guessing from what is in the host's certificate store.
+Reaching Flathub from this guest needed the root CA of a TLS-inspecting proxy added to its trust
+store, or `flatpak remote-add` fails with `[60] SSL peer certificate or SSH remote key was not OK`.
+
+That is a property of the network this pilot sits behind and not of the configuration: the guest is
+NAT'd through the development host, so it inherits whatever inspects the host's traffic. A pilot
+built elsewhere may never see it. Read the certificate the network actually presents with
+`openssl s_client` rather than picking one out of the host's certificate store — a managed
+workstation carries several roots that all look plausible, and the wrong one fails identically.
 
 ## Capture log
 

@@ -180,9 +180,8 @@ stage_flatpak() {
 			then
 				die "cannot reach Flathub over TLS.
 
-On a network that intercepts TLS this means the interception CA is not in the
-machine's trust store. README.md, under 'On a network that intercepts TLS', has
-the two commands that read the certificate off the wire and install it.
+If this network inspects TLS, its CA has to be in the machine trust store.
+See README.md under 'If Flathub is unreachable'.
 
 Re-run with --skip-flatpak to apply everything else in the meantime."
 			fi
