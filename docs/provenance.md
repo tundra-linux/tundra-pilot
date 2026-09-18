@@ -124,6 +124,12 @@ discarded rather than carried forward: a pass on a version the pilot no longer r
 | `doas` `persist` suppresses the second prompt | — | **not demonstrated.** The build supports it (the timestamp strings are in the binary, and Fedora builds with `--with-timestamp`), but each scripted invocation gets a fresh pty session, and the timestamp is keyed to the session. Needs a real terminal |
 | Flatpak portals work | Workstation pilot | pass — `org.freedesktop.portal.FileChooser` version 4 answers from inside a running Flatpak sandbox, not just from the host session |
 | theming applies with no fallback | Workstation pilot | pass — after clearing the frozen per-user defaults and restarting the shell, plasmashell logs no theme-resolution errors and every theming key resolves to its intended value |
+| rootless containers | Workstation pilot | pass — podman reports cgroups v2 and rootless true, a container ran, and distrobox created and entered a Debian box whose ldd names glibc 2.41. Note the pilot cannot exercise the point of this on Tundra, since both host and container are glibc here |
+| Flatpak update mechanism | Workstation pilot | pass — timer scheduled, the updater wrote its state file, and exactly one Notify call reached the bus with the app name, summary and the changed applications. A second run is silent |
+| MIME defaults | Workstation pilot | pass — all fifteen associations resolve to the intended desktop id |
+| printing | Workstation pilot | pass — `lpstat -r` reports the scheduler running |
+| bluetooth | Workstation pilot | pass — the service is enabled and skips cleanly on `ConditionPathIsDirectory=/sys/class/bluetooth`, which is the correct behaviour on a machine with no adapter rather than a failure |
+| `capture.sh` default path | Workstation pilot | pass — runs clean, records the Plasma version, writes a delta and appends to this record |
 | Flatpak audio works | Workstation pilot | pass — `pactl` inside the sandbox reports the PipeWire server and default sink, and `paplay` of a real sample exited 0 with the sink moving `SUSPENDED` to `IDLE` |
 | services enabled | Workstation pilot | pass — `libvirtd`, `cups`, `bluetooth`, `tundra-update.timer` all enabled |
 | group membership | Workstation pilot | pass — `bmeyer` in `wheel` and `libvirt` |
@@ -172,3 +178,24 @@ the wallpaper and the containment.
 
 To re-test a key that was delivered this way, delete `~/.config/kdedefaults/` and log in again.
 Nothing else clears it.
+
+## The baseline is bound to a Plasma version
+
+`baseline/` was captured on Plasma 6.6.4, before the machine was upgraded. The pilot now runs
+6.7.5, and a shortcut delta taken against that baseline reports sixteen lines of bindings nobody
+here touched — `Walk Through Windows` gaining a `Meta+Tab` alternate, the desktop-switch keys
+gaining `Meta+F1` through `Meta+F4`, `Lock Session` gaining `Screensaver`. Those are upstream
+changes between the two releases, faithfully reported.
+
+So a baseline is only meaningful against the Plasma version it was taken on. Used across an
+upgrade it silently converts someone else's release notes into Tundra's customisations, and the
+result looks exactly like a legitimate delta.
+
+`baseline/` is still correct as a record of stock Fedora KDE 44 at 6.6.4, which is what it says it
+is. What it can no longer do is produce a trustworthy delta on this machine.
+
+Re-capturing it is not a matter of re-running the script, because `/etc/xdg` is now seeded and a
+new account would inherit Tundra's defaults rather than stock ones. The sequence is: revert to the
+pre-apply snapshot, `dnf upgrade`, create an account, capture the baseline, then apply. Until that
+is done, treat any captured shortcut delta as contaminated and keep shipping the three hand-written
+entries.
