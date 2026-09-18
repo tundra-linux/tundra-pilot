@@ -62,3 +62,10 @@ Early. The tree exists, the scripts run, and the desktop design has not been dri
 task checklist yet. No decision here has survived contact with hardware — the pilot is a VM, so
 suspend and resume, backlight, wifi, discrete graphics, real printers and real Bluetooth adapters
 are all out of reach and belong to Phase 2's hardware matrix.
+
+## Licence
+
+MIT. See [`LICENSE`](LICENSE).
+
+The Look-and-Feel package declares the same licence in its own `metadata.json`, because it is
+installed as a standalone Plasma package and gets read on its own once it leaves this tree.

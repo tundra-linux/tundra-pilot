@@ -34,6 +34,7 @@ tracked_files() {
 		-not -name '.editorconfig' \
 		-not -name 'README.md' \
 		-not -name 'AGENTS.md' \
+		-not -name 'LICENSE' \
 		-print | sed -e "s|^$REPO_ROOT/||" | sort
 }
 
