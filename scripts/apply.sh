@@ -171,8 +171,24 @@ stage_flatpak() {
 	have flatpak || die "flatpak is not installed; run the package stage first"
 
 	if ! flatpak remotes --system --columns=name 2>/dev/null | grep -qx flathub; then
-		would "add the flathub remote" || flatpak remote-add --system --if-not-exists \
-			flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+		# Check reachability first. The bare failure from flatpak is a curl error code, which
+		# gives no hint that the cause is a trust store missing the network's interception CA.
+		if ! would "add the flathub remote"; then
+			if have curl &&
+				! curl -sSf -o /dev/null \
+					https://dl.flathub.org/repo/flathub.flatpakrepo 2>/dev/null
+			then
+				die "cannot reach Flathub over TLS.
+
+On a network that intercepts TLS this means the interception CA is not in the
+machine's trust store. README.md, under 'On a network that intercepts TLS', has
+the two commands that read the certificate off the wire and install it.
+
+Re-run with --skip-flatpak to apply everything else in the meantime."
+			fi
+			flatpak remote-add --system --if-not-exists \
+				flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+		fi
 	fi
 
 	installed=$(flatpak list --system --app --columns=application 2>/dev/null || true)
