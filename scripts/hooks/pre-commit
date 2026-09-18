@@ -1,0 +1,23 @@
+#!/bin/sh
+# Installed to .git/hooks/pre-commit by scripts/apply.sh.
+#
+# The lint rules only hold if something enforces them on every commit. A check run by hand is
+# a check that stops being run, usually in the same week it is written.
+#
+# To commit past a failure deliberately: git commit --no-verify. Do that for a work in
+# progress on a branch, not for anything that lands.
+
+set -eu
+
+root=$(git rev-parse --show-toplevel)
+
+"$root/scripts/lint.sh" || {
+	printf '\npre-commit: lint failed. Fix it, or use --no-verify if this is a WIP branch.\n' >&2
+	exit 1
+}
+
+"$root/scripts/translate-check.sh" || {
+	printf '\npre-commit: every file needs a row in docs/translation.md naming where it goes\n' >&2
+	printf 'on Alpine. That record is the Phase 2 handoff.\n' >&2
+	exit 1
+}
