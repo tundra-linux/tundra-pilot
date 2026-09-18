@@ -58,10 +58,21 @@ technically literate and locking settings generates support load.
 
 ## Status
 
-Early. The tree exists, the scripts run, and the desktop design has not been driven through its
-task checklist yet. No decision here has survived contact with hardware — the pilot is a VM, so
-suspend and resume, backlight, wifi, discrete graphics, real printers and real Bluetooth adapters
-are all out of reach and belong to Phase 2's hardware matrix.
+This tree has been applied to the pilot and most of it is verified. The package delta, the
+`/etc/xdg` defaults, the Look-and-Feel package, the shell, `doas`, the Flatpak set and the update
+mechanism are all in place; a freshly created account gets the intended panel from the layout
+script, and `apply.sh` reports no changes on a second run. What passed, and on which host, is in
+[`docs/provenance.md`](docs/provenance.md).
+
+What is not done: the task checklist in [`docs/checklist.md`](docs/checklist.md) has never been
+run, so nobody has judged the design by using it. The Look-and-Feel package names a wallpaper that
+does not exist yet. And the baseline was captured on an older Plasma than the machine now runs, so
+a captured shortcut delta is not currently trustworthy.
+
+No decision here has survived contact with hardware — the pilot is a VM, so suspend and resume,
+backlight, wifi, discrete graphics, real printers and real Bluetooth adapters are all out of reach
+and belong to Phase 2's hardware matrix. Virtualization is out of reach on this host too, which
+runs locked virtualization-based security, so `/dev/kvm` never appears in the guest.
 
 ## Licence
 

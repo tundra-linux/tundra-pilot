@@ -4,9 +4,14 @@ Which Plasma version each key was read against, whether it was captured or hand-
 whether it takes effect from `/etc/xdg` or has to fall back to `/etc/skel`.
 
 KDE config keys move between releases. A file with no provenance cannot be safely replayed on
-a different version, and the gap this record closes is not academic: the pilot runs a minor
-Plasma release ahead of Alpine on some components and a release behind on others, so a key
-that works here may not exist on the target, or may have moved.
+a different version, and the gap this record closes is not academic: the pilot runs ahead of
+Alpine on both Plasma and KDE Gear, so a key that works here may simply not exist on the target
+yet.
+
+It also runs ahead of where it started. This machine was installed at Plasma 6.6.4 and upgraded to
+6.7.5 partway through, which is why every version below is written down rather than inferred. An
+installed system can sit behind its own repository indefinitely and the running desktop gives no
+sign of it.
 
 Provenance does not live in comment headers inside the config files themselves. KConfig
 rewrites those files whenever Plasma touches them and does not reliably preserve comments, so

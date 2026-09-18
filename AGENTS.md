@@ -74,6 +74,27 @@ Provenance does not go in a comment header inside the config file. KConfig rewri
 whenever Plasma touches them and does not reliably preserve comments, so an inline note disappears
 on the first capture round-trip without anyone noticing.
 
+## Two places a default can live, and only one of them stays live
+
+This is the trap in this tree, and it costs a debugging session every time someone falls into it.
+
+Put the key in `/etc/xdg`. Put nothing in the Look-and-Feel package's `contents/defaults` except
+the wallpaper and the default containment.
+
+Plasma copies `contents/defaults` into the user's `~/.config/kdedefaults/` the first time they log
+in, and that directory sits ahead of `/etc/xdg` in the session's `XDG_CONFIG_DIRS`. A key delivered
+through the package is therefore frozen per-account at first login and stops following the image
+from then on. Fixing the package and the system default afterwards changes nothing, and the symptom
+gives no hint where to look.
+
+If a key delivered that way ever needs re-testing, delete `~/.config/kdedefaults/` and log in
+again. Nothing else clears it.
+
+Name things by what is installed, not by the family they belong to. The Breeze desktop theme ships
+as `default`; there is no `breeze`, and naming one gets a silent fallback and a line in the journal.
+The same care applies to a MIME association, where a desktop ID that is not installed resolves to
+nothing and reports nothing.
+
 `baseline/` is stock configuration pulled off the pilot before any change was made. It is never
 edited and never applied. It exists so shortcut changes can ship as a delta rather than as a full
 copy of a file that would otherwise freeze unrelated Plasma defaults.
