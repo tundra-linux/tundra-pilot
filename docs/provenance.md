@@ -120,7 +120,10 @@ discarded rather than carried forward: a pass on a version the pilot no longer r
 | removals held, libraries kept | Workstation pilot | pass — `PackageKit`, `plasma-discover` and `kf6-baloo-file` absent; `PackageKit-Qt6` and `kf6-baloo-libs` present, so `plasma-desktop` survived |
 | zsh hook applied exactly once | Workstation pilot | pass — marker count 1, and `rpm -Va zsh` reports only `/etc/zshrc` and `/etc/skel/.zshrc` |
 | `doas.conf` parses | Workstation pilot | pass — `doas -C` clean as root |
-| `doas` escalates for a `wheel` member | — | **not yet run.** Needs an interactive session: `doas` prompts for a password and a non-interactive ssh command has no tty, so it reports `Authentication failed` regardless of whether the rule is right |
+| `doas` escalates for a `wheel` member | Workstation pilot | pass — a throwaway `wheel` account authenticated once through a pty and ran as uid 0. A non-`wheel` account got `doas: Operation not permitted`, so both halves of the rule hold |
+| `doas` `persist` suppresses the second prompt | — | **not demonstrated.** The build supports it (the timestamp strings are in the binary, and Fedora builds with `--with-timestamp`), but each scripted invocation gets a fresh pty session, and the timestamp is keyed to the session. Needs a real terminal |
+| Flatpak portals work | Workstation pilot | pass — `org.freedesktop.portal.FileChooser` version 4 answers from inside a running Flatpak sandbox, not just from the host session |
+| Flatpak audio works | Workstation pilot | pass — `pactl` inside the sandbox reports the PipeWire server and default sink, and `paplay` of a real sample exited 0 with the sink moving `SUSPENDED` to `IDLE` |
 | services enabled | Workstation pilot | pass — `libvirtd`, `cups`, `bluetooth`, `tundra-update.timer` all enabled |
 | group membership | Workstation pilot | pass — `bmeyer` in `wheel` and `libvirt` |
 | Flatpak set installed | Workstation pilot | pass — all six references present in `flatpak list --system --app` |
@@ -139,3 +142,32 @@ intercepting CA is the one the network actually presents, which is worth reading
 ## Capture log
 
 Appended by `scripts/capture.sh`. Each line is one run.
+
+## The Look-and-Feel package freezes what it sets
+
+At first login, Plasma copies the Look-and-Feel package's `contents/defaults` into the user's
+`~/.config/kdedefaults/`, one file per config file it mentions, plus a `package` file naming the
+source. That directory sits between `~/.config` and `/etc/xdg` in the cascade, so from then on the
+copied values shadow the system defaults.
+
+The consequence is sharp enough to state plainly: **any key the Look-and-Feel package sets stops
+following `/etc/xdg` the moment a user first logs in.** It is frozen per-user at whatever value the
+package held that day. Updating the image later does not reach that account.
+
+This was found the expensive way. `contents/defaults` and `xdg/plasmarc` both carried the Plasma
+desktop theme, the name was wrong, and fixing both files plus restarting the shell changed nothing
+for an account that had already logged in — because `~/.config/kdedefaults/plasmarc` still held the
+old value and won.
+
+So the two mechanisms are not interchangeable and must not overlap:
+
+| Deliver through | For | Because |
+|---|---|---|
+| `contents/defaults` | wallpaper, splash, the default containment | Consumed once when the account and its desktop are created. Nothing later can change them anyway |
+| `/etc/xdg` | every theming and behaviour key | Stays live. A later image update still reaches accounts that never touched the key |
+
+A key in both places gets the worse of the two, which is why `contents/defaults` now carries only
+the wallpaper and the containment.
+
+To re-test a key that was delivered this way, delete `~/.config/kdedefaults/` and log in again.
+Nothing else clears it.

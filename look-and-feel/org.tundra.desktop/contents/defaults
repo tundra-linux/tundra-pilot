@@ -1,18 +1,3 @@
-[kdeglobals][KDE]
-widgetStyle=Breeze
-
-[kdeglobals][General]
-ColorScheme=BreezeLight
-
-[kdeglobals][Icons]
-Theme=breeze
-
-[plasmarc][Theme]
-name=default
-
-[kcminputrc][Mouse]
-cursorTheme=breeze_cursors
-
 [Wallpaper]
 Image=org.tundra.desktop
 
