@@ -100,7 +100,9 @@ stage_xdg() {
 
 stage_lookandfeel() {
 	log "== look-and-feel"
-	install_tree "$REPO_ROOT/look-and-feel/org.tundra.desktop" \
+	# Exclusive: this directory is Tundra's alone, so a renamed layout script should not leave
+	# its old name behind for plasmashell to find.
+	install_tree_exclusive "$REPO_ROOT/look-and-feel/org.tundra.desktop" \
 		/usr/share/plasma/look-and-feel/org.tundra.desktop
 }
 
