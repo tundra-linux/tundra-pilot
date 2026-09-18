@@ -1,0 +1,34 @@
+* text=auto eol=lf
+
+# Binary assets must be exempt from eol normalization. `text=auto` above misdetects some
+# binaries as text, and git then strips `\r` bytes on checkout, so the working tree holds
+# corrupted files while the stored blobs stay intact. A PNG signature is
+# `89 50 4e 47 0d 0a 1a 0a`; losing the `0d` makes it unrecognisable.
+#
+# The Look-and-Feel package carries wallpapers and theme-picker previews, so this repo tracks
+# binaries from its first commit. The list is copied whole rather than grown an extension at a
+# time, because the corruption arrives silently with the first binary committed.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.avif binary
+*.webp binary
+*.pdf  binary
+*.woff binary
+*.woff2 binary
+*.ttf  binary
+*.otf  binary
+*.eot  binary
+*.mp4  binary
+*.webm binary
+*.zip  binary
+*.img  binary
+*.iso  binary
+*.apk  binary
+*.raucb binary
+
+# Everything under baseline/ is stock Plasma config pulled off the pilot, byte for byte, and
+# diffed against later (P1-D05). Normalising line endings on it would make the diff lie.
+baseline/** -text

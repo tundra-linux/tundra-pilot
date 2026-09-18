@@ -1,0 +1,28 @@
+# Shell scripts, KDE config files and JSON. LF endings everywhere, because every one of these
+# files is destined for a Linux filesystem and several are parsed by tools that treat a stray
+# `\r` as part of a value.
+#
+# KDE config files under xdg/ and baseline/ are rewritten by KConfig whenever Plasma touches
+# them. Nothing here should fight that: no trailing-whitespace trimming, no final-newline
+# insertion, or a capture round-trip shows up as a diff that means nothing.
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+[*.{sh,zsh}]
+indent_style = tab
+indent_size = 4
+
+[*.md]
+max_line_length = 100
+
+[{baseline/**,xdg/**,look-and-feel/**/defaults}]
+insert_final_newline = false
+trim_trailing_whitespace = false

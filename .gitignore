@@ -1,0 +1,44 @@
+# Signing material must never enter this repo, even by accident. Tundra's update chain is a
+# single CA with an offline root, and a leak of either key is unrecoverable: every installed
+# machine trusts them, and RAUC has no rotation mechanism to fall back on.
+#
+# This is the mechanical backstop for a stray `git add -A`. Staging explicitly is still the
+# rule, and this list is not a substitute for it.
+*.pem
+*.key
+*.rsa
+*.priv
+*.p12
+*.pfx
+*.cer
+*.crt
+*.gpg
+*.asc
+.env
+.env.*
+
+# Build and image output. This repo holds configuration; images belong to Phase 2.
+*.img
+*.iso
+*.raucb
+*.apk
+
+# RPM leaves these beside a `%config(noreplace)` file it wanted to update. They carry the
+# packager's version of a file the apply script has modified, which is useful on the pilot and
+# meaningless in the tree.
+*.rpmnew
+*.rpmsave
+*.rpmorig
+
+# Scratch output from the lint harness: the BusyBox applet list pulled out of the Alpine
+# container, and anything else written while a check runs.
+.lint-cache/
+
+# OS and editor cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*~
