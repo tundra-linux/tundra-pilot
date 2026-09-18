@@ -123,6 +123,7 @@ discarded rather than carried forward: a pass on a version the pilot no longer r
 | `doas` escalates for a `wheel` member | Workstation pilot | pass — a throwaway `wheel` account authenticated once through a pty and ran as uid 0. A non-`wheel` account got `doas: Operation not permitted`, so both halves of the rule hold |
 | `doas` `persist` suppresses the second prompt | — | **not demonstrated.** The build supports it (the timestamp strings are in the binary, and Fedora builds with `--with-timestamp`), but each scripted invocation gets a fresh pty session, and the timestamp is keyed to the session. Needs a real terminal |
 | Flatpak portals work | Workstation pilot | pass — `org.freedesktop.portal.FileChooser` version 4 answers from inside a running Flatpak sandbox, not just from the host session |
+| theming applies with no fallback | Workstation pilot | pass — after clearing the frozen per-user defaults and restarting the shell, plasmashell logs no theme-resolution errors and every theming key resolves to its intended value |
 | Flatpak audio works | Workstation pilot | pass — `pactl` inside the sandbox reports the PipeWire server and default sink, and `paplay` of a real sample exited 0 with the sink moving `SUSPENDED` to `IDLE` |
 | services enabled | Workstation pilot | pass — `libvirtd`, `cups`, `bluetooth`, `tundra-update.timer` all enabled |
 | group membership | Workstation pilot | pass — `bmeyer` in `wheel` and `libvirt` |
