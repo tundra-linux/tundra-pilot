@@ -102,10 +102,11 @@ BusyBox vocabulary rule for that reason.
   KWrite and no Kate. Check every desktop ID exists on the target before shipping the association:
   a MIME entry naming an absent application resolves to nothing and reports nothing, which is the
   worst way for a default to be wrong.
-  These two are the last host applications the design still depends on, and they are a parity gap
-  rather than a translation note. The package delta now removes Firefox, LibreOffice and Okular
-  precisely because a host application cannot exist on Tundra; an image viewer and a text editor
-  are the same problem, left standing only because closing it means either adding two more
-  Flatpaks to the default set or accepting that two common file types open nothing. That is a
-  decision about the application set, not about this file, and it wants settling before Phase 2
-  consumes either.
+  These two are the last host applications the design still depends on. The package delta removes
+  Firefox, LibreOffice and Okular precisely because a host application cannot exist on Tundra, and
+  an image viewer and a text editor are the same problem — but they stay here on purpose. Removing
+  them on the pilot while the replacement is undecided would leave two common file types opening
+  nothing, which is worse than the gap it closes.
+  The question is carried in the planning repo as a Phase 2 open question, to be settled before the
+  application set is frozen: either the default Flatpak set grows by an image viewer and a text
+  editor, or these associations point at something already in it.
