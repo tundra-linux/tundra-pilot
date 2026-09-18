@@ -135,6 +135,7 @@ discarded rather than carried forward: a pass on a version the pilot no longer r
 | printing | Workstation pilot | pass — `lpstat -r` reports the scheduler running |
 | bluetooth | Workstation pilot | pass — the service is enabled and skips cleanly on `ConditionPathIsDirectory=/sys/class/bluetooth`, which is the correct behaviour on a machine with no adapter rather than a failure |
 | `capture.sh` default path | Workstation pilot | pass — runs clean, records the Plasma version, writes a delta and appends to this record |
+| host applications removed | Workstation pilot | pass — firefox, libreoffice-core and okular gone with about a gigabyte of dependencies, Plasma and Dolphin still installed, plasmashell still running, and the PDF, HTML and ODT associations now resolve to the Flatpaks with no host application competing |
 | Flatpak audio works | Workstation pilot | pass — `pactl` inside the sandbox reports the PipeWire server and default sink, and `paplay` of a real sample exited 0 with the sink moving `SUSPENDED` to `IDLE` |
 | services enabled | Workstation pilot | pass — `libvirtd`, `cups`, `bluetooth`, `tundra-update.timer` all enabled |
 | group membership | Workstation pilot | pass — `bmeyer` in `wheel` and `libvirt` |
