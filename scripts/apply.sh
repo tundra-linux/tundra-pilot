@@ -241,6 +241,12 @@ stage_update_timer() {
 
 	would "write and enable the pilot systemd timer for tundra-update" && return 0
 
+	# Generated into a temp file and then compared, so a second run is silent. Writing the units
+	# unconditionally and re-running `systemctl enable` works, but it reports a change on every
+	# run, and a stage that always claims to have done something makes the idempotency gate
+	# unreadable — which is the whole point of that gate.
+	tmp=$(mktemp -d)
+
 	printf '%s\n' \
 		'[Unit]' \
 		'Description=Update Flatpak applications' \
@@ -250,7 +256,7 @@ stage_update_timer() {
 		'[Service]' \
 		'Type=oneshot' \
 		'ExecStart=/usr/local/bin/tundra-update' \
-		>/etc/systemd/system/tundra-update.service
+		>"$tmp/tundra-update.service"
 
 	printf '%s\n' \
 		'[Unit]' \
@@ -263,11 +269,29 @@ stage_update_timer() {
 		'' \
 		'[Install]' \
 		'WantedBy=timers.target' \
-		>/etc/systemd/system/tundra-update.timer
+		>"$tmp/tundra-update.timer"
 
-	systemctl daemon-reload
-	systemctl enable --now tundra-update.timer
-	log "enabled tundra-update.timer"
+	units_changed=0
+	for unit in tundra-update.service tundra-update.timer; do
+		if [ -f "/etc/systemd/system/$unit" ] &&
+			cmp -s "$tmp/$unit" "/etc/systemd/system/$unit"; then
+			continue
+		fi
+		cp -- "$tmp/$unit" "/etc/systemd/system/$unit"
+		chmod 0644 "/etc/systemd/system/$unit"
+		log "installed /etc/systemd/system/$unit"
+		units_changed=1
+	done
+	rm -rf "$tmp"
+
+	if [ "$units_changed" = 1 ]; then
+		systemctl daemon-reload
+	fi
+
+	if ! systemctl is-enabled tundra-update.timer >/dev/null 2>&1; then
+		systemctl enable --now tundra-update.timer
+		log "enabled tundra-update.timer"
+	fi
 }
 
 # --- 11. the pre-commit hook -------------------------------------------------------------
