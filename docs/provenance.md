@@ -98,9 +98,27 @@ because nested virtualization is unavailable under Workstation on this developme
 Record the host against each gate here as they are cleared, so that a pass is never a
 statement about a machine that is not the pilot.
 
+All results below are from the first `apply.sh` run, against Plasma 6.6.4 before the machine was
+upgraded. They are re-run after the upgrade, because a pass on a version the pilot no longer runs
+is not a pass.
+
 | Gate | Host | Result |
 |---|---|---|
-| `/bin/sh` is bash | Workstation pilot | pass, 2026-09-18 |
+| `/bin/sh` is bash | Workstation pilot | pass — `/usr/bin/bash` |
+| `busybox --list` has `ash` | Workstation pilot | pass |
+| login shell is zsh | Workstation pilot | pass — `/usr/bin/zsh` from `getent passwd` |
+| removals held, libraries kept | Workstation pilot | pass — `PackageKit`, `plasma-discover` and `kf6-baloo-file` absent; `PackageKit-Qt6` and `kf6-baloo-libs` present, so `plasma-desktop` survived |
+| zsh hook applied exactly once | Workstation pilot | pass — marker count 1, and `rpm -Va zsh` reports only `/etc/zshrc` and `/etc/skel/.zshrc` |
+| `doas.conf` parses | Workstation pilot | pass — `doas -C` clean as root |
+| `doas` escalates for a `wheel` member | — | **not yet run.** Needs an interactive session: `doas` prompts for a password and a non-interactive ssh command has no tty, so it reports `Authentication failed` regardless of whether the rule is right |
+| services enabled | Workstation pilot | pass — `libvirtd`, `cups`, `bluetooth`, `tundra-update.timer` all enabled |
+| group membership | Workstation pilot | pass — `bmeyer` in `wheel` and `libvirt` |
+| Flatpak set installed | Workstation pilot | pass — all six references present in `flatpak list --system --app` |
+
+Reaching Flathub needed the corporate TLS-interception root CA in the guest's trust store. Without
+it `flatpak remote-add` fails with `[60] SSL peer certificate or SSH remote key was not OK`. The
+intercepting CA is the one the network actually presents, which is worth reading off the wire with
+`openssl s_client` rather than guessing from what is in the host's certificate store.
 
 ## Capture log
 
