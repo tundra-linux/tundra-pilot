@@ -14,3 +14,18 @@ kf6-baloo-file                 | (not installed)             | the file-content 
 akonadi-server                 | (not installed)             | the PIM storage service. Tundra ships no mail or calendar client, and akonadi runs a database per user for nothing
 kmail                          | (not installed)             | PIM. Not in the default application set
 korganizer                     | (not installed)             | PIM. Not in the default application set
+
+# --- host applications that Tundra cannot have ---------------------------------------------
+#
+# Phase 2 ships no host package manager and no host applications: everything a user runs is a
+# Flatpak. A host RPM application on the pilot is therefore not a duplicate to tidy up later, it
+# is a difference between the pilot and the target, and it makes every check done here a statement
+# about a system nobody will run. Removing them is parity work, not housekeeping.
+#
+# The KDE spin ships all three by default. Each has a Flatpak in flatpak/apps.txt doing the same
+# job, so removing the RPM leaves the function in place and the delivery mechanism correct.
+
+firefox                        | (not installed)             | duplicate browser. Chromium ships as a Flatpak, and two browsers on a machine aimed at migrants is a choice nobody asked for
+firefox-langpacks              | (not installed)             | goes with firefox
+libreoffice-core               | (not installed)             | the whole LibreOffice RPM stack hangs off this one package, so removing it takes all twenty of them. LibreOffice ships as a Flatpak
+okular                         | (not installed)             | duplicate PDF reader. Okular ships as a Flatpak, which is what mimeapps.list points application/pdf at

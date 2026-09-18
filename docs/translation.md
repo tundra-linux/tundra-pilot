@@ -98,8 +98,14 @@ BusyBox vocabulary rule for that reason.
   `rc_cgroup_mode=unified` set explicitly. BusyBox `adduser` does not provision subuid and
   subgid ranges at all, which is a real gap rather than a configuration difference.
 - `mimeapps.list` names `org.kde.gwenview.desktop` and `org.kde.kwrite.desktop`, which are host
-  applications on the pilot. On an image-based host with Flatpak as the only application
-  channel, either those become Flatpaks or the associations change. The editor is KWrite and not
-  Kate, because Fedora's KDE spin ships KWrite and no Kate. Check every desktop ID exists on the
-  target before shipping the association: a MIME entry naming an absent application resolves to
-  nothing and reports nothing, which is the worst way for a default to be wrong.
+  applications on the pilot. The editor is KWrite and not Kate, because Fedora's KDE spin ships
+  KWrite and no Kate. Check every desktop ID exists on the target before shipping the association:
+  a MIME entry naming an absent application resolves to nothing and reports nothing, which is the
+  worst way for a default to be wrong.
+  These two are the last host applications the design still depends on, and they are a parity gap
+  rather than a translation note. The package delta now removes Firefox, LibreOffice and Okular
+  precisely because a host application cannot exist on Tundra; an image viewer and a text editor
+  are the same problem, left standing only because closing it means either adding two more
+  Flatpaks to the default set or accepting that two common file types open nothing. That is a
+  decision about the application set, not about this file, and it wants settling before Phase 2
+  consumes either.
