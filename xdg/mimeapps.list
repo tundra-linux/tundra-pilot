@@ -13,4 +13,4 @@ application/vnd.openxmlformats-officedocument.spreadsheetml.sheet=org.libreoffic
 application/vnd.openxmlformats-officedocument.presentationml.presentation=org.libreoffice.LibreOffice.desktop
 application/vnd.oasis.opendocument.text=org.libreoffice.LibreOffice.desktop
 application/vnd.oasis.opendocument.spreadsheet=org.libreoffice.LibreOffice.desktop
-text/plain=org.kde.kate.desktop
+text/plain=org.kde.kwrite.desktop

@@ -14,27 +14,23 @@ an inline note disappears on the first capture round-trip without anyone noticin
 
 ## Reference platform
 
-| | Installed on the pilot | Available in `updates` |
-|---|---|---|
-| Distribution | Fedora KDE Plasma Desktop 44 | |
-| `plasma-desktop` | 6.6.4-1.fc44 | **6.7.5-1.fc44** |
-| `plasma-workspace` | 6.6.4-1.fc44 | **6.7.5-1.fc44** |
-| `kwin-common` | 6.6.4-2.fc44 | |
-| `breeze-gtk-common` | 6.7.5-1.fc44 | |
-| KDE Frameworks | 6.25.0-1.fc44 | |
-| KDE Gear | 25.12.3 | |
-| `/bin/sh` | `/usr/bin/bash` | |
-| Host | VMware Workstation guest, EFI, 4 vCPU, 8 GB, 3D acceleration and audio present | |
+| | Version |
+|---|---|
+| Distribution | Fedora KDE Plasma Desktop 44, fully updated |
+| Plasma | 6.7.5-1.fc44 |
+| KDE Frameworks | 6.30.0-1.fc44 |
+| KDE Gear | 26.08.1-1.fc44 |
+| Kernel | 7.2.5-200.fc44 |
+| `/bin/sh` | `/usr/bin/bash` |
+| Host | VMware Workstation guest, EFI, 4 vCPU, 8 GB, 3D acceleration and audio present |
 
-Read on the pilot on 2026-09-18 with `rpm -q` and `dnf list --available`. Enabled repositories are
+Read with `rpm -q` on 2026-09-18, after `dnf upgrade` and a reboot. Enabled repositories are
 `fedora`, `updates` and `fedora-cisco-openh264`; `updates-testing` is not enabled.
 
-**The pilot is behind its own repository and the stack is currently mixed.** The machine was
-installed and never fully updated, so Plasma sits at 6.6.4 while `updates` offers 6.7.5 — and
-`breeze-gtk` came in at 6.7.5 as a dependency of the package delta, so two halves of the same
-release are now installed side by side. Nothing should be captured in this state: a key recorded
-here is a claim about a system that matches neither the reference platform nor any shipped Fedora.
-Run `dnf upgrade` and re-read this table before the first capture.
+The machine was installed at Plasma 6.6.4 with Gear 25.12.3 and sat there until it was upgraded,
+which is worth knowing because nothing about the running desktop makes that visible. Read the
+version before a capture rather than inferring it from the release, and re-read it after any
+upgrade.
 
 Query the package manager, never the running shell. `plasmashell --version` aborts without a
 display, which is exactly the condition when working over ssh.
@@ -47,23 +43,29 @@ whether Plasma honours the key when it is supplied from `/etc/xdg` as a system d
 KCMs write keys they do not read back that way, and a value that does not take has to fall
 back to `/etc/skel`, where it reaches new accounts only.
 
-Nothing is `captured` yet and nothing has been tested for `takes`. Both columns get filled by
-running a fresh-user login against seeded defaults and diffing the result.
+Nothing is `captured` yet. The `takes` column has been measured: a user account was created after
+seeding `/etc/xdg`, and every key was read back with `kreadconfig6` running as that user, which is
+the same KConfig cascade Plasma itself reads. Every seeded key came back with the intended value.
+
+That settles the mechanism and not the whole question. It proves the value reaches the user, which
+is what the delivery model depends on. It does not prove each Plasma component acts on the value at
+session start, and the components that read a default once at first run are the ones to re-check
+when the desktop is driven by hand.
 
 | File | Key | Status | Takes from `/etc/xdg` | Plasma |
 |---|---|---|---|---|
-| `kdeglobals` | `[KDE] LookAndFeelPackage` | seed | untested | 6.7.5 (target) |
-| `kdeglobals` | `[KDE] widgetStyle` | seed | untested | 6.7.5 (target) |
-| `kdeglobals` | `[General] ColorScheme` | seed | untested | 6.7.5 (target) |
-| `dolphinrc` | `[General] EditableUrlNavigator` | seed | untested | 6.7.5 (target) |
-| `dolphinrc` | `[General] ShowFullPath` | seed | untested | 6.7.5 (target) |
-| `plasmarc` | `[Theme] name` | seed | untested | 6.7.5 (target) |
-| `kwinrc` | `[Windows] ElectricBorderMaximize` | seed | untested | 6.7.5 (target) |
-| `kwinrc` | `[Windows] ElectricBorderTiling` | seed | untested | 6.7.5 (target) |
-| `mimeapps.list` | all | seed | untested | 6.7.5 (target) |
-| `gtk-3.0/settings.ini` | all | seed | untested | n/a |
-| `gtk-4.0/settings.ini` | all | seed | untested | n/a |
-| `kglobalshortcutsrc` | the three `[services]` entries below | seed | untested | 6.7.5 (target) |
+| `kdeglobals` | `[KDE] LookAndFeelPackage` | seed | yes | 6.7.5 |
+| `kdeglobals` | `[KDE] widgetStyle` | seed | yes | 6.7.5 |
+| `kdeglobals` | `[General] ColorScheme` | seed | yes | 6.7.5 |
+| `dolphinrc` | `[General] EditableUrlNavigator` | seed | yes | 6.7.5 |
+| `dolphinrc` | `[General] ShowFullPath` | seed | yes | 6.7.5 |
+| `plasmarc` | `[Theme] name` | seed | yes | 6.7.5 |
+| `kwinrc` | `[Windows] ElectricBorderMaximize` | seed | yes | 6.7.5 |
+| `kwinrc` | `[Windows] ElectricBorderTiling` | seed | yes | 6.7.5 |
+| `mimeapps.list` | all | seed | yes | 6.7.5 |
+| `gtk-3.0/settings.ini` | all | seed | yes | n/a |
+| `gtk-4.0/settings.ini` | all | seed | yes | n/a |
+| `kglobalshortcutsrc` | the three `[services]` entries below | seed | yes | 6.7.5 |
 
 ## Shortcuts: what is already stock
 
@@ -83,9 +85,9 @@ file has three entries rather than thirty.
 Worth noting as a design freebie: `Meta+1` through `Meta+9` already activate task manager
 entries by position, which is Windows behaviour nobody had to ask for.
 
-The three unbound ones are what `xdg/kglobalshortcutsrc` supplies. Whether Plasma honours a
-`[services][…] _launch=` entry supplied from `/etc/xdg` rather than from `~/.config` is
-untested and is the single most likely thing in this file to need a `/etc/skel` fallback.
+The three unbound ones are what `xdg/kglobalshortcutsrc` supplies, and all three reach a fresh user
+from `/etc/xdg`: `kreadconfig6` run as that user returns each `_launch` value intact. This was the
+entry in the file most likely to need an `/etc/skel` fallback, and it does not.
 
 `SingleClick` is deliberately absent. It lives in `kdeglobals` under `[KDE]`, not in
 `dolphinrc`, and Plasma has defaulted to double-click since 6.0 — so the setting is already
@@ -98,9 +100,8 @@ because nested virtualization is unavailable under Workstation on this developme
 Record the host against each gate here as they are cleared, so that a pass is never a
 statement about a machine that is not the pilot.
 
-All results below are from the first `apply.sh` run, against Plasma 6.6.4 before the machine was
-upgraded. They are re-run after the upgrade, because a pass on a version the pilot no longer runs
-is not a pass.
+All results below were re-run after the upgrade, against Plasma 6.7.5. An earlier pass on 6.6.4 was
+discarded rather than carried forward: a pass on a version the pilot no longer runs is not a pass.
 
 | Gate | Host | Result |
 |---|---|---|
@@ -114,6 +115,12 @@ is not a pass.
 | services enabled | Workstation pilot | pass — `libvirtd`, `cups`, `bluetooth`, `tundra-update.timer` all enabled |
 | group membership | Workstation pilot | pass — `bmeyer` in `wheel` and `libvirt` |
 | Flatpak set installed | Workstation pilot | pass — all six references present in `flatpak list --system --app` |
+| `virsh -c qemu:///system list --all` unprivileged | Workstation pilot | pass — returns a list with no permission error and no password prompt. Note `/dev/kvm` is absent here, which is what makes this gate insufficient on its own |
+| removals survive `dnf upgrade` | Workstation pilot | pass — a full upgrade pulled none of the three back in |
+| apply from a git checkout, twice | Workstation pilot | pass — first run installs the pre-commit hook, second run reports no changes at all |
+| `/etc/xdg` cascade reaches a fresh user | Workstation pilot | pass — every seeded key, including the three shortcut entries, read back intact with `kreadconfig6` as a newly created account |
+| Look-and-Feel package is valid | Workstation pilot | pass — `kpackagetool6 --type Plasma/LookAndFeel --show org.tundra.desktop` resolves name, plugin id and path. Note `plasma-apply-lookandfeel --list` prints nothing over ssh, including for the stock packages, so it is not a usable check without a session |
+| MIME targets exist | Workstation pilot | **failed, then fixed** — `org.kde.kate.desktop` is not installed on the KDE spin, which ships KWrite. The association pointed at nothing and reported nothing |
 
 Reaching Flathub needed the corporate TLS-interception root CA in the guest's trust store. Without
 it `flatpak remote-add` fails with `[60] SSL peer certificate or SSH remote key was not OK`. The

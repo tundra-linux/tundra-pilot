@@ -96,6 +96,9 @@ BusyBox vocabulary rule for that reason.
   being provisioned at user creation. systemd does the first on the pilot; OpenRC needs
   `rc_cgroup_mode=unified` set explicitly. BusyBox `adduser` does not provision subuid and
   subgid ranges at all, which is a real gap rather than a configuration difference.
-- `mimeapps.list` names `org.kde.gwenview.desktop` and `org.kde.kate.desktop`, which are host
+- `mimeapps.list` names `org.kde.gwenview.desktop` and `org.kde.kwrite.desktop`, which are host
   applications on the pilot. On an image-based host with Flatpak as the only application
-  channel, either those become Flatpaks or the associations change.
+  channel, either those become Flatpaks or the associations change. The editor is KWrite and not
+  Kate, because Fedora's KDE spin ships KWrite and no Kate. Check every desktop ID exists on the
+  target before shipping the association: a MIME entry naming an absent application resolves to
+  nothing and reports nothing, which is the worst way for a default to be wrong.
